@@ -3,8 +3,6 @@
 * Студент: [Ульяна Атарик](https://up.htmlacademy.ru/react/13/user/2393583).
 * Наставник: [Кирилл Пиринен](https://htmlacademy.ru/profile/id2388689).
 
----
-
 _Не удаляйте и не изменяйте папки и файлы:_
 _`.editorconfig`, `.gitattributes`, `.gitignore`._
 
