@@ -1,10 +1,14 @@
 import Logo from '../../components/logo/logo';
 import User from '../../components/user/user';
 import Sign from '../../components/sign/sign';
+import { Helmet } from 'react-helmet-async';
 
 function FavoritesScreen(): JSX.Element {
   return (
     <div className="page">
+      <Helmet>
+        <title>Шесть городов. Выбранные места</title>
+      </Helmet>
       <header className="header">
         <div className="container">
           <div className="header__wrapper">

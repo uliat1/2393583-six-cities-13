@@ -1,18 +1,40 @@
+import Logo from '../../components/logo/logo';
+import User from '../../components/user/user';
+import Sign from '../../components/sign/sign';
+import { Link } from 'react-router-dom';
+
 function NotFound(): JSX.Element {
-  return (
-    <div className="cities">
-      <div className="cities__places-container cities__places-container--empty container">
-        <section className="cities__no-places">
-          <div className="cities__status-wrapper tabs__content">
-            <b className="cities__status">No places to stay available</b>
-            <p className="cities__status-description">
-                We could not find any property available at the moment in
-                Dusseldorf
-            </p>
+  return(
+    <div className="page page--favorites-empty">
+      <header className="header">
+        <div className="container">
+          <div className="header__wrapper">
+            <Logo />
+            <nav className="header__nav">
+              <ul className="header__nav-list">
+                <User />
+                <Sign />
+              </ul>
+            </nav>
           </div>
-        </section>
-        <div className="cities__right-section"></div>
-      </div>
+        </div>
+      </header>
+
+      <main className="page__main page__main--favorites page__main--favorites-empty">
+        <div className="page__favorites-container container">
+          <section className="favorites favorites--empty">
+            <div className="favorites__status-wrapper">
+              <b className="favorites__status">404 Not Found</b>
+              <Link className="footer__logo-link" to="/">Вернуться на главную</Link>
+            </div>
+          </section>
+        </div>
+      </main>
+      <footer className="footer">
+        <Link className="footer__logo-link" to="/">
+          <img className="footer__logo" src="img/logo.svg" alt="6 cities logo" width="64" height="33" />
+        </Link>
+      </footer>
     </div>
   );
 }
