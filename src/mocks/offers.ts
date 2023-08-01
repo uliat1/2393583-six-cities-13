@@ -15,8 +15,8 @@ export const offers: Offer[] = [
       },
     },
     location: {
-      latitude: 52.3909553943508,
-      longitude: 4.85309666406198,
+      latitude: 52.3740300,
+      longitude: 4.8896900,
       zoom: 8,
     },
     isFavorite: true,
