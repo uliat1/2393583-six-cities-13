@@ -3,18 +3,23 @@ import { HelmetProvider } from 'react-helmet-async';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import WelcomeScreen from '../../pages/main/main';
 import LoginScreen from '../../pages/login-page/login-page';
-import NotFound from '../../pages/not-found-page/not-found-page';
-import OfferScreen from '../../pages/offer-page/offer-page';
 import FavoritesScreen from '../../pages/favorites-page/favorites-page';
+import OfferScreen from '../../pages/offer-page/offer-page';
+import NotFound from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-router/private-router';
-import { Offer } from '../../types/offer';
+import { Offer, OfferCard } from '../../types/offer';
+import { Review } from '../../types/review';
 
 type AppProps = {
-    placesCount: number;
-    offers: Offer[];
-}
+  offers: Offer[];
+  offerFullCard: OfferCard;
+  reviews: Review[];
+  cities: string[];
+};
 
-function App({placesCount, offers}: AppProps): JSX.Element {
+function App(props: AppProps): JSX.Element {
+  const {offers, offerFullCard, reviews, cities} = props;
+
   return (
     <HelmetProvider>
       <BrowserRouter>
@@ -22,32 +27,29 @@ function App({placesCount, offers}: AppProps): JSX.Element {
           <Route
             path={AppRoute.Main}
             element={
-              <WelcomeScreen placesCount={placesCount} offers={offers} />
+              <WelcomeScreen
+                offers={offers}
+                cities={cities}
+              />
             }
           />
-        </Routes>
-        <Routes>
           <Route path={AppRoute.Login} element={<LoginScreen />} />
-        </Routes>
-        <Routes>
           <Route
             path={AppRoute.Favotites}
             element={
-              <PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}>
-                <FavoritesScreen offers={offers}/>
+              <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
+                <FavoritesScreen offers={offers} />
               </PrivateRoute>
             }
           />
-        </Routes>
-        <Routes>
-          <Route path={AppRoute.Offer} element={<OfferScreen />} />
-        </Routes>
-        <Routes>
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path={AppRoute.Offer}
+            element={<OfferScreen offers={offers} offerFullCard={offerFullCard} reviews={reviews} />}
+          />
+          <Route path="*" element={<NotFound/>} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>
   );
 }
-
 export default App;
