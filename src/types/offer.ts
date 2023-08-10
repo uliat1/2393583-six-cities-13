@@ -28,13 +28,21 @@ export type Offer = {
       previewImage?: string;
 };
 
-type OfferDescription = {
-    description: string;
-    bedrooms: number;
-    goods:string[];
-    host: Host;
-    images: string[];
-    maxAdults: number;
+export type OfferCard = {
+  id: string;
+  title: string;
+  type: string;
+  price: number;
+  city: City;
+  location: Location;
+  isFavorite: boolean;
+  isPremium: boolean;
+  rating: number;
+  description: string;
+  bedrooms: number;
+  goods:string[];
+  host: Host;
+  images: string[];
+  maxAdults: number;
 };
 
-export type OfferCard = Offer | OfferDescription;
