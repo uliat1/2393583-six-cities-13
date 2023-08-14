@@ -8,14 +8,27 @@ import {
   setOffersDataLoadingStatus,
 } from './action'
 import { AuthorizationStatus } from '../const';
+import { Offer } from '../types/offer';
 
 
 const FIRST_CITY = 'Paris';
 
-const initialState = {
+type InitialStateType = {
+  city: string;
+  offers: Offer[];
+  authorizationStatus: AuthorizationStatus;
+  error: string | null;
+  isOffersDataLoading: boolean;
+  favorites: Offer[];
+}
+
+const initialState: InitialStateType = {
   city: FIRST_CITY,
   offers: [],
-  AuthorizationStatus: AuthorizationStatus.Unknown,
+  authorizationStatus: AuthorizationStatus.Unknown,
+  error: null,
+  isOffersDataLoading: false,
+  favorites: [],
 };
 
 const reducer = createReducer(initialState, (builder) => {
