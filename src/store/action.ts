@@ -7,4 +7,4 @@ export const fillOffersList = createAction<{offers: Offer[]}>('fillOffersList');
 export const requirementAuthorization = createAction<AuthorizationStatus>('requirementAuthorization');
 export const setError = createAction<string | null>('setError');
 export const setOffersDataLoadingStatus = createAction<boolean>('setOffersDataLoadingStatus');
-export const loadingFavorites = createAction<{favorites: Offer[]}>('loadFavorites');
+export const loadingFavorites = createAction<{favorites: Offer[]}>('loadingFavorites');

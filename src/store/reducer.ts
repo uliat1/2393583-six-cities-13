@@ -6,7 +6,7 @@ import {
   fillOffersList,
   setError,
   setOffersDataLoadingStatus,
-} from './action'
+} from './action';
 import { AuthorizationStatus } from '../const';
 import { Offer } from '../types/offer';
 
@@ -38,9 +38,6 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(fillOffersList, (state, action) => {
       state.offers = action.payload.offers;
-    });
-    .addCase(loadingFavorites, (state, action) => {
-      state.favorites = action.payload;
     })
     .addCase(requirementAuthorization, (state, action) => {
       state.authorizationStatus = action.payload;
@@ -51,6 +48,9 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(setOffersDataLoadingStatus, (state, action) => {
       state.isOffersDataLoading = action.payload;
     })
+    .addCase(loadingFavorites, (state, action) => {
+      state.favorites = action.payload;
+    });
 });
 
 export { reducer };
