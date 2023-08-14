@@ -7,6 +7,7 @@ import {
   setError,
   setOffersDataLoadingStatus,
 } from './action'
+import { AuthorizationStatus } from '../const';
 
 
 const FIRST_CITY = 'Paris';
@@ -14,6 +15,7 @@ const FIRST_CITY = 'Paris';
 const initialState = {
   city: FIRST_CITY,
   offers: [],
+  AuthorizationStatus: AuthorizationStatus.Unknown,
 };
 
 const reducer = createReducer(initialState, (builder) => {
