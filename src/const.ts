@@ -20,3 +20,14 @@ export const DateFormat = {
   DATE_FORMAT: 'YYYY-MM-DD',
   REVIEW_DATE_FORMAT: 'MMMM YYYY',
 };
+
+export enum APIRoute {
+  Offers = '/offers',
+  OffersNearBy = '/nearby',
+  Faforite = '/favorite',
+  Comments = '/comments',
+  Login = '/login',
+  Logout = '/logout',
+}
+
+export const TIMEOUT_SHOW_ERROR = 2000;
