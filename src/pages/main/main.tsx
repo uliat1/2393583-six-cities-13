@@ -7,16 +7,17 @@ import { Offer } from '../../types/offer';
 import { Helmet } from 'react-helmet-async';
 import { useAppSelector } from '../../hooks';
 import CitiesList from '../../components/cities-list/cities-list';
+import { CITIES, AuthorizationStatus } from '../../const';
 
 type WelcomeScreenProps = {
-    cities: string[];
+    cities: typeof CITIES;
     offers: Offer[];
+    authorizationStatus: AuthorizationStatus;
 }
 
-function WelcomeScreen({offers, cities}: WelcomeScreenProps): JSX.Element {
+function WelcomeScreen({offers, cities, authorizationStatus}: WelcomeScreenProps): JSX.Element {
   const city = useAppSelector((state) => state.city);
   const currentOffers = offers.filter((offer) => offer.city.name === city);
-
 
   return (
     <div className="page page--gray page--main">
@@ -27,12 +28,7 @@ function WelcomeScreen({offers, cities}: WelcomeScreenProps): JSX.Element {
         <div className="container">
           <div className="header__wrapper">
             <Logo />
-            <nav className="header__nav">
-              <ul className="header__nav-list">
-                <User />
-                <Sign />
-              </ul>
-            </nav>
+            {authorizationStatus === AuthorizationStatus.Auth ? <User /> : <Sign />}
           </div>
         </div>
       </header>
