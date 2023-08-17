@@ -1,4 +1,4 @@
-import { Route, BrowserRouter, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import WelcomeScreen from '../../pages/main/main';
@@ -7,22 +7,35 @@ import FavoritesScreen from '../../pages/favorites-page/favorites-page';
 import OfferScreen from '../../pages/offer-page/offer-page';
 import NotFound from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-router/private-router';
-import { Offer, OfferCard } from '../../types/offer';
+import { OfferCard } from '../../types/offer';
 import { Review } from '../../types/review';
+import HistoryRouter from '../history-route/history-route';
+import browserHistory from '../../browser-history';
+import LoadingScreen from '../../pages/loading-page/loading-page';
+import { useAppSelector } from '../../hooks';
 
 type AppProps = {
-  offers: Offer[];
   offerFullCard: OfferCard;
   reviews: Review[];
   cities: string[];
 };
 
 function App(props: AppProps): JSX.Element {
-  const {offers, offerFullCard, reviews, cities} = props;
+  const {offerFullCard, reviews, cities} = props;
+
+  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const isOffersDataLoading = useAppSelector((state) => state.isOffersDataLoading);
+  const offers = useAppSelector((state) => state.offers);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown || isOffersDataLoading) {
+    return (
+      <LoadingScreen />
+    );
+  }
 
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <HistoryRouter history={browserHistory}>
         <Routes>
           <Route
             path={AppRoute.Main}
@@ -30,6 +43,7 @@ function App(props: AppProps): JSX.Element {
               <WelcomeScreen
                 offers={offers}
                 cities={cities}
+                authorizationStatus={authorizationStatus}
               />
             }
           />
@@ -37,8 +51,8 @@ function App(props: AppProps): JSX.Element {
           <Route
             path={AppRoute.Favotites}
             element={
-              <PrivateRoute authorizationStatus={AuthorizationStatus.Auth}>
-                <FavoritesScreen offers={offers} />
+              <PrivateRoute authorizationStatus={authorizationStatus}>
+                <FavoritesScreen />
               </PrivateRoute>
             }
           />
@@ -48,7 +62,7 @@ function App(props: AppProps): JSX.Element {
           />
           <Route path="*" element={<NotFound/>} />
         </Routes>
-      </BrowserRouter>
+      </HistoryRouter>
     </HelmetProvider>
   );
 }
