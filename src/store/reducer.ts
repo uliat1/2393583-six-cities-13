@@ -9,11 +9,13 @@ import {
   loadNearbyOffers,
   loadReviews,
   sendReview,
+  changeSortingType,
 } from './action';
 import { Offer, OfferCard } from '../types/offer';
 import { AuthorizationStatus, RequestStatus, FIRST_CITY } from '../const';
 import { fetchOfferByIdAction } from './api-actions';
 import { Review, RequestComment } from '../types/review';
+import { SortingType, DEFAULT_SORT} from '../const';
 
 type InitialStateType = {
   city: string;
@@ -26,6 +28,7 @@ type InitialStateType = {
   nearbyOffers: Offer[];
   comments: Review[];
   comment: RequestComment | null;
+  sortingType: SortingType;
 }
 
 const initialState: InitialStateType = {
@@ -39,6 +42,7 @@ const initialState: InitialStateType = {
   nearbyOffers: [],
   comments: [],
   comment: null,
+  sortingType: DEFAULT_SORT,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -78,6 +82,9 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(sendReview, (state, action) => {
       state.comment = action.payload;
+    })
+    .addCase(changeSortingType, (state, action) => {
+      state.sortingType = action.payload.type;
     });
 });
 
