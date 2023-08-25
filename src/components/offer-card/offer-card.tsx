@@ -1,22 +1,25 @@
-import {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../types/offer';
 import { AppRoute } from '../../const';
 
-type PlaceCardProps = {
+type OfferCardProps = {
   offer: Offer;
+  onCardHover?: (offer: Offer) => void;
 }
 
-function PlaceCard({offer}: PlaceCardProps): JSX.Element {
+function OfferCard({offer, onCardHover}: OfferCardProps): JSX.Element {
   const {isPremium, previewImage, price, title, type, id} = offer;
 
-  const [/*placeCard*/, setActivePlaceCard] = useState('');
+  const handlerCardHover = (card: Offer) => {
+    if (onCardHover) {
+      onCardHover(card);
+    }
+  };
 
   return (
     <article className="cities__card place-card"
       id={id}
-      onMouseEnter={({currentTarget}) => setActivePlaceCard(currentTarget.id)}
-      onMouseLeave={() => setActivePlaceCard('')}
+      onMouseEnter={() => handlerCardHover(offer)}
     >
       {isPremium
         ? <div className="place-card__mark"><span>Premium</span></div>
@@ -49,12 +52,13 @@ function PlaceCard({offer}: PlaceCardProps): JSX.Element {
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
-        <h2 className="place-card__name">
-          <Link to={AppRoute.Offer}>{title}</Link>
+        <h2 className="place-card__name" >
+          <Link to={`${AppRoute.Offer}${id}`}>{title}</Link>
         </h2>
         <p className="place-card__type">{type}</p>
       </div>
     </article>
   );
 }
-export default PlaceCard;
+
+export default OfferCard;

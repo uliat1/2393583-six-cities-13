@@ -1,20 +1,52 @@
+import { Rating } from './types/rating';
+import { StatusCodes } from 'http-status-codes';
+
 export enum AppRoute {
   Main = '/',
   Login = '/login',
   Favotites = '/favorites',
-  Offer = '/offer/:id',
+  Offer = '/offer/',
+  NotFound = '*',
 }
+
 export enum AuthorizationStatus {
   Auth = 'AUTH',
   NoAuth = 'NO_AUTH',
   Unknown = 'UNKNOWN',
 }
-export const URL_MARKER_DEFAULT =
-  'https://assets.htmlacademy.ru/content/intensive/javascript-1/demo/interactive-map/pin.svg';
-export const URL_MARKER_CURRENT =
-  'https://assets.htmlacademy.ru/content/intensive/javascript-1/demo/interactive-map/main-pin.svg';
+
+export const RATINGS = [
+  {
+    score: 5,
+    label: 'perfect'
+  },
+  {
+    score: 4,
+    label: 'good'
+  },
+  {
+    score: 3,
+    label: 'not bad'
+  },
+  {
+    score: 2,
+    label: 'badly'
+  },
+  {
+    score: 1,
+    label: 'terribly'
+  },
+] as Rating[];
+
+export const URL_MARKER_DEFAULT = 'markup/img/pin.svg';
+
+export const URL_MARKER_CURRENT = 'markup/img/pin-active.svg';
+
+export const MIN_COMMENT_LENGTH = 50;
+export const MAX_COMMENT_LENGTH = 300;
 
 export const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+export const FIRST_CITY = 'Paris';
 
 export const DateFormat = {
   DATE_FORMAT: 'YYYY-MM-DD',
@@ -31,3 +63,22 @@ export enum APIRoute {
 }
 
 export const TIMEOUT_SHOW_ERROR = 2000;
+
+export const AUTH_TOKEN_KEY_NAME = 'six-cities-token';
+
+export const NEARBY_OFFFERS_COUNT = 3;
+
+export const HTTP_CODES_TO_DISPLAY = [StatusCodes.BAD_REQUEST, StatusCodes.UNAUTHORIZED, StatusCodes.NOT_FOUND];
+
+export enum RequestStatus {
+  Idle = 'Idle',
+  Pending = 'Pending',
+  Success = 'Success',
+  Error = 'Error',
+}
+
+export const BACKEND_URL = 'https://13.design.pages.academy/six-cities';
+export const REQUEST_TIMEOUT = 5000;
+
+export const MAX_IMAGES_IN_OFFER_CARD = 6;
+export const MAX_COMMENTS_IN_REVIEW = 10;
