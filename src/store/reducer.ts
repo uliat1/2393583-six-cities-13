@@ -1,34 +1,44 @@
 import { createReducer } from '@reduxjs/toolkit';
 import {
   changeCity,
-  requirementAuthorization,
-  loadingFavorites,
   fillOffersList,
-  setError,
+  requirementAuthorization,
   setOffersDataLoadingStatus,
+  loadFavorites,
+  loadOfferById,
+  loadNearbyOffers,
+  loadReviews,
+  sendReview,
 } from './action';
-import { AuthorizationStatus } from '../const';
-import { Offer } from '../types/offer';
-
-
-const FIRST_CITY = 'Paris';
+import { Offer, OfferCard } from '../types/offer';
+import { AuthorizationStatus, RequestStatus, FIRST_CITY } from '../const';
+import { fetchOfferByIdAction } from './api-actions';
+import { Review, RequestComment } from '../types/review';
 
 type InitialStateType = {
   city: string;
   offers: Offer[];
   authorizationStatus: AuthorizationStatus;
-  error: string | null;
   isOffersDataLoading: boolean;
   favorites: Offer[];
+  offer: OfferCard | null;
+  offerFetchingStatus: RequestStatus;
+  nearbyOffers: Offer[];
+  comments: Review[];
+  comment: RequestComment | null;
 }
 
 const initialState: InitialStateType = {
   city: FIRST_CITY,
   offers: [],
   authorizationStatus: AuthorizationStatus.Unknown,
-  error: null,
   isOffersDataLoading: false,
   favorites: [],
+  offer: null,
+  offerFetchingStatus: RequestStatus.Idle,
+  nearbyOffers: [],
+  comments: [],
+  comment: null,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -42,14 +52,32 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(requirementAuthorization, (state, action) => {
       state.authorizationStatus = action.payload;
     })
-    .addCase(setError, (state, action) => {
-      state.error = action.payload;
-    })
     .addCase(setOffersDataLoadingStatus, (state, action) => {
       state.isOffersDataLoading = action.payload;
     })
-    .addCase(loadingFavorites, (state, action) => {
+    .addCase(loadFavorites, (state, action) => {
       state.favorites = action.payload;
+    })
+    .addCase(loadOfferById, (state, action) => {
+      state.offer = action.payload;
+    })
+    .addCase(fetchOfferByIdAction.pending, (state) => {
+      state.offerFetchingStatus = RequestStatus.Pending;
+    })
+    .addCase(fetchOfferByIdAction.fulfilled, (state) => {
+      state.offerFetchingStatus = RequestStatus.Success;
+    })
+    .addCase(fetchOfferByIdAction.rejected, (state) => {
+      state.offerFetchingStatus = RequestStatus.Error;
+    })
+    .addCase(loadNearbyOffers, (state, action) => {
+      state.nearbyOffers = action.payload;
+    })
+    .addCase(loadReviews, (state, action) => {
+      state.comments = action.payload;
+    })
+    .addCase(sendReview, (state, action) => {
+      state.comment = action.payload;
     });
 });
 

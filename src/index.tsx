@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './components/app/app';
-import { offerFullCard, offers } from './mocks/offers';
-import { reviews } from './mocks/reviews';
-import { CITIES } from './const';
 import { Provider } from 'react-redux';
+import App from './components/app/app';
 import { store } from './store';
-import ErrorMessage from './components/error-message/error-message';
-import { checkAuthAction } from './store/api-actions';
+import { CITIES } from './const';
+import { ToastContainer } from 'react-toastify';
+import { checkAuthAction, fetchOffersAction } from './store/api-actions';
+import 'react-toastify/dist/ReactToastify.css';
 
+store.dispatch(fetchOffersAction());
 store.dispatch(checkAuthAction());
 
 const root = ReactDOM.createRoot(
@@ -18,11 +18,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ErrorMessage />
+      <ToastContainer />
       <App
-        offers={offers}
-        offerFullCard={offerFullCard}
-        reviews={reviews}
         cities={CITIES}
       />
     </Provider>

@@ -1,9 +1,8 @@
-import { Offer} from '../../types/offer';
+import { Offer } from '../../types/offer';
 
 type FavoritesCardProps = {
   offer: Offer;
 }
-
 
 function FavoritesCard({offer}: FavoritesCardProps): JSX.Element {
   const {isPremium, previewImage, price, title, type} = offer;

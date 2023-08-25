@@ -1,23 +1,22 @@
-import Logo from '../../components/logo/logo';
 import { Helmet } from 'react-helmet-async';
-import { useRef, FormEvent } from 'react';
-import { loginAction } from '../../store/api-actions';
+import { FormEvent } from 'react';
+import Logo from '../../components/logo/logo';
 import { useAppDispatch } from '../../hooks';
+import { loginAction } from '../../store/api-actions';
+import { AuthData } from '../../types/auth-data';
 
 function LoginScreen(): JSX.Element {
   const dispatch = useAppDispatch();
 
-  const loginRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
-
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (loginRef.current !== null && passwordRef.current !== null) {
-      dispatch(loginAction({
-        login: loginRef.current.value,
-        password: passwordRef.current.value
-      }));
+    const form = evt.currentTarget;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData) as AuthData;
+
+    if (data !== null) {
+      dispatch(loginAction(data));
     }
   };
 
@@ -47,28 +46,27 @@ function LoginScreen(): JSX.Element {
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">E-mail</label>
                 <input
-                  ref={loginRef}
                   className="login__input form__input"
                   type="email"
                   name="email"
-                  placeholder="Email" required
+                  placeholder="Email"
+                  required
                 />
               </div>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">Password</label>
                 <input
-                  ref={passwordRef}
                   className="login__input form__input"
                   type="password"
                   name="password"
-                  placeholder="Password" required
+                  placeholder="Password"
+                  required
                 />
               </div>
               <button
                 className="login__submit form__submit button"
                 type="submit"
-              >
-                Sign in
+              >Sign in
               </button>
             </form>
           </section>
