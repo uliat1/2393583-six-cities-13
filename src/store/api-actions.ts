@@ -2,11 +2,10 @@ import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state';
 import { Offer, OfferCard } from '../types/offer';
-import { APIRoute, AuthorizationStatus, AppRoute } from '../const';
+import { APIRoute, AppRoute } from '../const';
 import {
   fillOffersList,
   loadFavorites,
-  requirementAuthorization,
   setOffersDataLoadingStatus,
   redirectToRoute,
   loadOfferById,
@@ -101,13 +100,8 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
     extra: AxiosInstance;
 }>(
   'user/checkAuth',
-  async (_arg, {dispatch, extra: api}) => {
-    try {
-      await api.get(APIRoute.Login);
-      dispatch(requirementAuthorization(AuthorizationStatus.Auth));
-    } catch {
-      dispatch(requirementAuthorization(AuthorizationStatus.NoAuth));
-    }
+  async (_arg, {extra: api}) => {
+    await api.get(APIRoute.Login);
   },
 );
 
@@ -130,10 +124,9 @@ export const logoutAction = createAsyncThunk<void, undefined, {
     extra: AxiosInstance;
 }>(
   'user/logout',
-  async (_arg, {dispatch, extra: api}) => {
+  async (_arg, { extra: api}) => {
     await api.delete(APIRoute.Logout);
     dropToken();
 
-    dispatch(requirementAuthorization(AuthorizationStatus.NoAuth));
   },
 );

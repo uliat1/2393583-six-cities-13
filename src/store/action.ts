@@ -1,12 +1,11 @@
 import { createAction } from '@reduxjs/toolkit';
 import { Offer, OfferCard } from '../types/offer';
-import { AuthorizationStatus, AppRoute } from '../const';
+import { AppRoute } from '../const';
 import { Review, RequestComment } from '../types/review';
 import { SortingType } from '../const';
 
 export const changeCity = createAction<{city: string}>('changeCity');
 export const fillOffersList = createAction<{offers: Offer[]}>('fillOffersList');
-export const requirementAuthorization = createAction<AuthorizationStatus>('requirementAuthorization');
 export const setOffersDataLoadingStatus = createAction<boolean>('setOffersDataLoadingStatus');
 export const loadFavorites = createAction<Offer[]>('loadFavorites');
 export const redirectToRoute = createAction<AppRoute>('redirectToRoute');

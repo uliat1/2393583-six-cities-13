@@ -91,3 +91,10 @@ export enum SortingType {
 }
 
 export const DEFAULT_SORT = SortingType.Popular;
+
+export enum NameSpace {
+  Favorites = 'FAVORITES',
+  OfferById = 'OFFER_BY_ID',
+  Offers = 'OFFERS',
+  User = 'USER',
+}
