@@ -82,3 +82,12 @@ export const REQUEST_TIMEOUT = 5000;
 
 export const MAX_IMAGES_IN_OFFER_CARD = 6;
 export const MAX_COMMENTS_IN_REVIEW = 10;
+
+export enum SortingType {
+  Popular = 'Popular',
+  PriceLow = 'Price: low to high',
+  PriceHigh = 'Price: high to low',
+  TopRated = 'Top rated first',
+}
+
+export const DEFAULT_SORT = SortingType.Popular;
