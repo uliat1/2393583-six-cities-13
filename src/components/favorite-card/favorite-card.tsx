@@ -1,11 +1,20 @@
 import { Offer } from '../../types/offer';
+import { useDispatch } from 'react-redux';
+import { fetchChangeStatusFavoriteAction } from '../../store/api-actions';
 
 type FavoritesCardProps = {
   offer: Offer;
 }
 
 function FavoritesCard({offer}: FavoritesCardProps): JSX.Element {
-  const {isPremium, previewImage, price, title, type} = offer;
+  const {isPremium, previewImage, price, title, type, isFavorite, id} = offer;
+  const isOfferFullCard = false;
+  const dispatch = useDispatch();
+  const status = Number(!isFavorite);
+
+  const handleFavoriteClick = () => {
+    dispatch(fetchChangeStatusFavoriteAction({status, id}));
+  };
 
   return (
     <article className="favorites__card place-card">

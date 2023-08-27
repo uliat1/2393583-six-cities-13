@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NameSpace, SortingType } from '../../const';
+import { NameSpace, SortingType, FIRST_CITY, DEFAULT_SORT } from '../../const';
 import { OffersProcess } from '../../types/state';
 import { fetchChangeStatusFavoriteAction, fetchOffersAction } from '../api-actions';
-import { FIRST_CITY, DEFAULT_SORT } from '../../const';
+import { Offer } from '../../types/offer';
 
 const initialState: OffersProcess = {
   city: FIRST_CITY,
@@ -16,10 +16,10 @@ export const offersProcess = createSlice({
   name: NameSpace.Offers,
   initialState,
   reducers: {
-    changeCity: (state, action: PayloadAction) => {
+    changeCity: (state, action: PayloadAction<string>) => {
       state.city = action.payload;
     },
-    changeSortingType: (state, action: PayloadAction) => {
+    changeSortingType: (state, action: PayloadAction<SortingType>) => {
       state.sortingType = action.payload;
     }
   },
@@ -38,7 +38,7 @@ export const offersProcess = createSlice({
         state.hasError = true;
       })
       .addCase(fetchChangeStatusFavoriteAction.fulfilled, (state, action) => {
-        state.offers = state.offers.reduce((acc, offer) => {
+        state.offers = state.offers.reduce((acc: Offer[], offer) => {
           if (offer.id === action.payload.id) {
             return [...acc, {...offer,
               isFavorite: !offer.isFavorite}];

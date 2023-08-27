@@ -1,14 +1,11 @@
 import { Host } from './host';
 
-export type Review = {
-        id: string;
-        date: string;
-        user: Host;
-        comment: string;
-        rating: number;
-};
-
-export type RequestComment = {
+export type Comment = {
     comment: string;
-    ratingData: number;
-}
+    date: string;
+    id: number;
+    rating: number;
+    user: Host;
+  };
+
+export type Comments = Comment[];

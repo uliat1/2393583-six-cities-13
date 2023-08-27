@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 export enum AppRoute {
   Main = '/',
   Login = '/login',
-  Favotites = '/favorites',
+  Favorites = '/favorites',
   Offer = '/offer/',
   NotFound = '*',
 }

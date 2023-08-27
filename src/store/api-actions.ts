@@ -62,7 +62,7 @@ export const fetchSendReviewAction = createAsyncThunk<RequestComment | null, {ra
     state: State;
     extra: AxiosInstance;
   }>(
-    'fetchSendComment',
+    'fetchSendReviews',
     async ({rating, comment, id}, {dispatch, extra: api}) => {
       const {data} = await api.post<RequestComment>(`${APIRoute.Comments}/${id}`, {rating, comment});
       dispatch(fetchReviewsAction(id));
