@@ -1,29 +1,20 @@
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
+
 
 function NotFound(): JSX.Element {
-  return(
-    <div className="page page--favorites-empty">
-      <Helmet>
-        <title>Страница не найдена</title>
-      </Helmet>
-
-      <main className="page__main page__main--favorites page__main--favorites-empty">
-        <div className="page__favorites-container container">
-          <section className="favorites favorites--empty">
-            <div className="favorites__status-wrapper">
-              <b className="favorites__status">404 Not Found</b>
-              <Link className="footer__logo-link" to="/">Вернуться на главную</Link>
-            </div>
-          </section>
-        </div>
-      </main>
-      <footer className="footer">
-        <Link className="footer__logo-link" to="/">
-          <img className="footer__logo" src="img/logo.svg" alt="6 cities logo" width={64} height={33} />
-        </Link>
-      </footer>
-    </div>
+  return (
+    <>
+      <div>
+        <img src="img/ico-no-results.svg" width={100} alt="pic" className="center"></img>
+      </div>
+      <h1 style={{fontSize: '48px', textAlign: 'center', marginTop: '40vh'}}>404. Page not found</h1>
+      <Link to="/" style={{fontSize: '20px',
+        textAlign: 'center',
+        display: 'block',
+        textDecoration: 'underline'}}
+      >Вернуться на главную
+      </Link>
+    </>
   );
 }
 

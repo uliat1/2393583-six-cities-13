@@ -6,14 +6,14 @@ type PrivateRouteProps = {
   authorizationStatus: AuthorizationStatus;
 }
 
-function PrivateRoute(props: PrivateRouteProps): JSX.Element {
+function PrivateLoginRoute(props: PrivateRouteProps): JSX.Element {
   const {authorizationStatus, children} = props;
 
   return (
-    authorizationStatus !== AuthorizationStatus.Auth
+    authorizationStatus === AuthorizationStatus.Auth
       ? children
-      : <Navigate to={AppRoute.Login} />
+      : <Navigate to={AppRoute.Main} />
   );
 }
 
-export default PrivateRoute;
+export default PrivateLoginRoute;

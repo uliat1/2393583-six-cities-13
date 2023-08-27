@@ -1,38 +1,139 @@
-import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import FavoritesList from '../../components/favorite-list/favorite-list';
-import FavoritesEmpty from '../../components/favorite-empty/favorite-empty';
-import { useAppSelector } from '../../hooks';
+import Layout from '../../components/layout/layout';
+import BookmarkButton from '../../components/bookmark-button/bookmark-button';
+import {Offers, Offer} from '../../types/offer';
+import {calcRatingWidth} from '../../utils';
+import {store} from '../../store';
+import {useAppSelector, useAppDispatch} from '../../hooks';
+import { getFavoriteOffers } from '../../store/offer-data-process/selector';
+import FavoritesEmpty from '../favorites-empty/favorites-empty';
+import {changeCity} from '../../store/offer-process/offer-process';
+import {fetchFavoriteOffersAction} from '../../store/api-actions';
+
+store.dispatch(fetchFavoriteOffersAction());
 
 function FavoritesScreen(): JSX.Element {
-  const favorites = useAppSelector((state) => state.favorites);
+
+  const dispatch = useAppDispatch();
+
+  const favoriteOffers = useAppSelector(getFavoriteOffers);
+
+  const cities: {
+    [city: string]: Offers;
+  } = {};
+
+  favoriteOffers && favoriteOffers.forEach((offer) => {
+    const city = offer.city.name;
+    if(!cities[city]) {
+      cities[city] = [offer];
+    } else {
+      cities[city].push(offer);
+    }
+  });
+
+  const citiesOffers: [string, Offers][] = Object.entries(cities);
+
+  let keyValue = 0;
 
   return (
-    <div className="page">
-      <Helmet>
-        <title>Шесть городов. Выбранные места</title>
-      </Helmet>
+    favoriteOffers?.length ?
+      <div className='page'>
+        <Layout />
 
-      <main className="page__main page__main--favorites">
-        <div className="page__favorites-container container">
-          {favorites.length
-            ? <FavoritesList offers={favorites}/>
-            : <FavoritesEmpty />}
-        </div>
-      </main>
-      <footer className="footer container">
-        <Link className="footer__logo-link" to="/">
-          <img
-            className="footer__logo"
-            src="img/logo.svg"
-            alt="6 cities logo"
-            width={64}
-            height={33}
-          />
-        </Link>
-      </footer>
-    </div>
+        <main className='page__main page__main--favorites'>
+          <div className='page__favorites-container container'>
+            <section className='favorites'>
+              <h1 className='favorites__title'>Saved listing</h1>
+              <ul className='favorites__list'>
+
+                {citiesOffers.map((cityOffers) => {
+
+                  keyValue++;
+
+                  return (
+                    <li className='favorites__locations-items' key={keyValue}>
+                      <div className='favorites__locations locations locations--current'>
+                        <div className='locations__item'>
+                          <Link
+                            className='locations__item-link'
+                            to='/'
+                            onClick={() => {
+                              dispatch(changeCity(cityOffers[0]));
+                            }}
+                          >
+                            <span>{cityOffers[0]}</span>
+                          </Link>
+                        </div>
+                      </div>
+                      <div className='favorites__places'>
+
+                        {cityOffers[1].map((offer: Offer) => {
+                          const {
+                            isPremium,
+                            previewImage,
+                            price,
+                            rating,
+                            title,
+                            type,
+                            isFavorite,
+                            id
+                          } = offer;
+
+                          return (
+                            <article className='favorites__card place-card' key={id}>
+
+                              {isPremium ?
+                                <div className='place-card__mark'>
+                                  <span>Premium</span>
+                                </div> : null}
+
+                              <div className='favorites__image-wrapper place-card__image-wrapper'>
+                                <Link to={`/offer/${id}`}>
+                                  <img className='place-card__image' src={previewImage} width='150' height='110' alt={title} />
+                                </Link>
+                              </div>
+                              <div className='favorites__card-info place-card__info'>
+                                <div className='place-card__price-wrapper'>
+                                  <div className='place-card__price'>
+                                    <b className='place-card__price-value'>&euro;{price}</b>
+                                    <span className='place-card__price-text'>&#47;&nbsp;night</span>
+                                  </div>
+                                  <BookmarkButton
+                                    isFavorite={isFavorite}
+                                    id={id}
+                                  />
+                                </div>
+                                <div className='place-card__rating rating'>
+                                  <div className='place-card__stars rating__stars'>
+                                    <span style={{'width': calcRatingWidth(rating)}}></span>
+                                    <span className='visually-hidden'>Rating</span>
+                                  </div>
+                                </div>
+                                <h2 className='place-card__name'>
+                                  <Link to={`/offer/${id}`}>{title}</Link>
+                                </h2>
+                                <p className='place-card__type'>{type}</p>
+                              </div>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          </div>
+        </main>
+        <footer className='footer container'>
+          <Link className='footer__logo-link' to='/'>
+            <img className='footer__logo' src='img/logo.svg' alt='6 cities logo' width='64' height='33' />
+          </Link>
+        </footer>
+      </div> :
+      <FavoritesEmpty />
   );
+
 }
 
 export default FavoritesScreen;

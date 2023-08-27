@@ -1,14 +1,14 @@
-import { Host } from './host';
-
 export type Review = {
-        id: string;
-        date: string;
-        user: Host;
-        comment: string;
-        rating: number;
+  comment: string;
+  date: string;
+  id: number;
+  rating: number;
+  user: {
+    avatarUrl: string;
+    id: number;
+    isPro: boolean;
+    name: string;
+  };
 };
 
-export type RequestComment = {
-    comment: string;
-    ratingData: number;
-}
+export type Reviews = Review[];

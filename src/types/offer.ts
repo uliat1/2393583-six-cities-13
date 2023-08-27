@@ -3,33 +3,22 @@ import { Host } from './host';
 import { Location } from './location';
 
 export type Offer = {
-      id: string;
-      title: string;
-      type: string;
-      price: number;
-      city: City;
-      location: Location;
-      isFavorite: boolean;
-      isPremium: boolean;
-      rating: number;
-      previewImage?: string;
-};
-
-export type OfferCard = {
-  id: string;
-  title: string;
-  type: string;
-  price: number;
+  id: number;
   city: City;
-  location: Location;
+  previewImage: string;
+  images: string[];
+  title: string;
   isFavorite: boolean;
   isPremium: boolean;
   rating: number;
-  description: string;
+  type: string;
   bedrooms: number;
-  goods:string[];
-  host: Host;
-  images: string[];
   maxAdults: number;
+  price: number;
+  goods: string[];
+  host: Host;
+  description: string;
+  location: Location;
 };
 
+export type Offers = Offer[];
