@@ -1,11 +1,10 @@
-import { Rating } from './types/rating';
 import { StatusCodes } from 'http-status-codes';
 
 export enum AppRoute {
   Main = '/',
   Login = '/login',
   Favorites = '/favorites',
-  Offer = '/offer/',
+  OfferDetail = '/offer/:id',
   NotFound = '*',
 }
 
@@ -15,29 +14,6 @@ export enum AuthorizationStatus {
   Unknown = 'UNKNOWN',
 }
 
-export const RATINGS = [
-  {
-    score: 5,
-    label: 'perfect'
-  },
-  {
-    score: 4,
-    label: 'good'
-  },
-  {
-    score: 3,
-    label: 'not bad'
-  },
-  {
-    score: 2,
-    label: 'badly'
-  },
-  {
-    score: 1,
-    label: 'terribly'
-  },
-] as Rating[];
-
 export const URL_MARKER_DEFAULT = 'markup/img/pin.svg';
 
 export const URL_MARKER_CURRENT = 'markup/img/pin-active.svg';
@@ -45,7 +21,16 @@ export const URL_MARKER_CURRENT = 'markup/img/pin-active.svg';
 export const MIN_COMMENT_LENGTH = 50;
 export const MAX_COMMENT_LENGTH = 300;
 
-export const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+export enum Cities {
+  Paris = 'Paris',
+  Cologne = 'Cologne',
+  Brussels = 'Brussels',
+  Amsterdam = 'Amsterdam',
+  Hamburg = 'Hamburg',
+  Dusseldorf = 'Dusseldorf',
+}
+export const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+
 export const FIRST_CITY = 'Paris';
 
 export const DateFormat = {
@@ -70,13 +55,6 @@ export const NEARBY_OFFFERS_COUNT = 3;
 
 export const HTTP_CODES_TO_DISPLAY = [StatusCodes.BAD_REQUEST, StatusCodes.UNAUTHORIZED, StatusCodes.NOT_FOUND];
 
-export enum RequestStatus {
-  Idle = 'Idle',
-  Pending = 'Pending',
-  Success = 'Success',
-  Error = 'Error',
-}
-
 export const BACKEND_URL = 'https://13.design.pages.academy/six-cities';
 export const REQUEST_TIMEOUT = 5000;
 
@@ -93,8 +71,19 @@ export enum SortingType {
 export const DEFAULT_SORT = SortingType.Popular;
 
 export enum NameSpace {
-  Favorites = 'FAVORITES',
-  OfferById = 'OFFER_BY_ID',
-  Offers = 'OFFERS',
+  Data = 'DATA',
+  Offer = 'OFFER',
   User = 'USER',
 }
+
+
+export enum PlaceClasses {
+  MainPlacesListClass = 'cities__places-list places__list tabs__content',
+  NeighbourhoodPlacesListClass = 'near-places__list places__list',
+  MainPlaceCardClass = 'cities__card place-card',
+  NeighbourhoodPlaceCardClass = 'near-places__card place-card',
+}
+
+export const AUTH_USER_NAME = 'user-name';
+
+export const MAX_REVIEWS_NUMBER = 10;

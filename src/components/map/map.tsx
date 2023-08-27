@@ -1,15 +1,15 @@
 import {useRef, useEffect} from 'react';
 import leaflet from 'leaflet';
-import useMap from '../../hooks/useMap';
-import {Offer} from '../../types/offer';
+import useMap from '../../hooks/use-map';
 import {useAppSelector} from '../../hooks';
 import { URL_MARKER_DEFAULT, URL_MARKER_CURRENT } from '../../const';
 import {getCityData} from '../../utils';
-import {getSelectedCity} from '../../store/offer-process/selectors';
+import { getSelectedCity } from '../../store/offer-process/selector';
 import 'leaflet/dist/leaflet.css';
+import { Offers, Offer } from '../../types/offer';
 
 type MapProps = {
-  offers: Offer | undefined;
+  offers: Offers | undefined;
   selectedOffer?: Offer | undefined;
 };
 

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {Offers, Offer} from './types/offer';
-import {AuthorizationStatus} from './consts';
+import {AuthorizationStatus} from './const';
 import { Review } from './types/review';
 import { SortingType } from './const';
 
@@ -28,7 +28,7 @@ const sortPriceUp = (offerA: Offer, offerB: Offer) => getWeightForPriceUp(offerA
 const sortPriceDown = (offerA: Offer, offerB: Offer) => getWeightForPriceDown(offerA.price, offerB.price);
 const sortTopRatedFirst = (offerA: Offer, offerB: Offer) => getWeightForTopRatedFirst(offerA.rating, offerB.rating);
 
-const sortDayDown = (reviewA: Comment, reviewB: Comment) => dayjs(reviewB.date).diff(dayjs(reviewA.date));
+const sortDayDown = (reviewA: Review, reviewB: Review) => dayjs(reviewB.date).diff(dayjs(reviewA.date));
 
 const getSortedOffers = (offers: Offers | undefined, selectedOption: string) => {
   switch (selectedOption) {

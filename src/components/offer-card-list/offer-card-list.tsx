@@ -1,17 +1,32 @@
 import OfferCard from '../offer-card/offer-card';
-import { Offer } from '../../types/offer';
+import { Offers } from '../../types/offer';
+import { useAppSelector } from '../../hooks';
+import { getSortedOffers } from '../../utils';
+import { getSelectedOption } from '../../store/offer-process/selector';
 
 type OfferCardListProps = {
-    offers: Offer[];
-    onOfferCardHover: (offer: Offer) => void;
+  offers: Offers | undefined;
+  onPlaceCardMouseOver?: (id: number) => void;
+  placeListClass: string;
+  placeCardClass: string;
 }
 
-function OfferCardList({offers, onOfferCardHover}: OfferCardListProps): JSX.Element {
+function OfferCardList({offers, onPlaceCardMouseOver, placeListClass, placeCardClass}: OfferCardListProps): JSX.Element {
+
+  const selectedOption = useAppSelector(getSelectedOption);
+  const sortedOffers = getSortedOffers(offers, selectedOption);
+
   return (
-    <div className="cities__places-list places__list tabs__content">
-      {offers.map((offer) => <OfferCard key={offer.id} offer={offer} onCardHover={onOfferCardHover} />)}
+    <div className={placeListClass}>
+      {sortedOffers && sortedOffers.map((offer) => (
+        <OfferCard
+          key={offer.id}
+          offer={offer}
+          onPlaceCardMouseOver={onPlaceCardMouseOver}
+          placeCardClass={placeCardClass}
+        />
+      ))}
     </div>
   );
 }
-
 export default OfferCardList;

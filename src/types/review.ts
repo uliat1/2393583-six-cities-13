@@ -1,11 +1,14 @@
-import { Host } from './host';
-
-export type Comment = {
-    comment: string;
-    date: string;
+export type Review = {
+  comment: string;
+  date: string;
+  id: number;
+  rating: number;
+  user: {
+    avatarUrl: string;
     id: number;
-    rating: number;
-    user: Host;
+    isPro: boolean;
+    name: string;
   };
+};
 
-export type Comments = Comment[];
+export type Reviews = Review[];

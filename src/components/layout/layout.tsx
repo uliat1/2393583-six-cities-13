@@ -5,11 +5,11 @@ import { AuthorizationStatus } from '../../const';
 import {logoutAction} from '../../store/api-actions';
 import {getUserName, dropUserName} from '../../services/userName';
 import { getAuthorizationStatus } from '../../store/user-process/selector';
-import { getFavorites } from '../../store/favorite-process/selector';
+import { getFavoriteOffers } from '../../store/offer-data-process/selector';
 
-function Header(): JSX.Element {
+function Layout(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const favoriteOffersData = useAppSelector(getFavorites);
+  const favoriteOffersData = useAppSelector(getFavoriteOffers);
 
   const dispatch = useAppDispatch();
 
@@ -63,4 +63,4 @@ function Header(): JSX.Element {
   );
 }
 
-export default Header;
+export default Layout;

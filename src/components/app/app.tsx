@@ -1,39 +1,44 @@
-import { Route, Routes } from 'react-router-dom';
-import { AppRoute } from '../../const';
-import Layout from '../layout/layout';
-import WelcomeScreen from '../../pages/main/main';
-import LoginScreen from '../../pages/login-page/login-page';
-import FavoritesScreen from '../../pages/favorites-page/favorites-page';
-import OfferScreen from '../../pages/offer-page/offer-page';
+import {Route, Routes} from 'react-router-dom';
+import {AppRoute} from '../../const';
+import WelcomeScreen from '../../pages/welcome-page/welcome-page';
+import WelcomeScreenEmpty from '../../pages/welcome-page-empty/welcome-page-empty';
 import NotFound from '../../pages/not-found-page/not-found-page';
+import LoginScreen from '../../pages/login-page/login-page';
 import PrivateRoute from '../private-router/private-router';
-import { useAppSelector } from '../../hooks';
+import {useAppSelector} from '../../hooks';
 import LoadingSpinner from '../../pages/loading-spinner/loading-spinner';
-import { getOffers, getOffersDataLoadingStatus, getErrorStatus } from '../../store/offer-process/selector';
 import ErrorScreen from '../../pages/error-page/error-page';
+import {isCheckedAuth} from '../../utils';
+import { getAuthorizationStatus } from '../../store/user-process/selector';
+import { getServerErrorStatus, getOffers, getLoadedDataStatus } from '../../store/offer-data-process/selector';
+import OfferDetail from '../../pages/offer-detail/offer-detail';
+import FavoritesScreen from '../../pages/favorites-page/favorites-page';
+import PrivateLoginRoute from '../private-login-route/private-login-route';
 
 function App(): JSX.Element {
+
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const isAuthChecked = useAppSelector(getAuthCheckedStatus);
-  const isOffersDataLoading = useAppSelector(getOffersDataLoadingStatus);
-  const hasError = useAppSelector(getErrorStatus);
+  const isDataLoaded = useAppSelector(getLoadedDataStatus);
+  const isServerError = useAppSelector(getServerErrorStatus);
   const offers = useAppSelector(getOffers);
 
-  if (!isAuthChecked || isOffersDataLoading) {
+  if (isServerError) {
     return (
-      <LoadingSpinner />
+      <ErrorScreen />
     );
   }
 
-  if (hasError) {
-    return (<ErrorScreen />);
+  if (isCheckedAuth(authorizationStatus) || isDataLoaded) {
+    return (
+      <LoadingSpinner />
+    );
   }
 
   return (
     <Routes>
       <Route
         path={AppRoute.Main}
-        element={offers && offers.length ? <WelcomeScreen /> : <MainEmpty />}
+        element={offers && offers.length ? <WelcomeScreen /> : <WelcomeScreenEmpty />}
       />
       <Route
         path={AppRoute.Login}
@@ -52,9 +57,9 @@ function App(): JSX.Element {
         }
       />
       <Route
-        path={AppRoute.Room}
+        path={AppRoute.OfferDetail}
         element={
-          <Room />
+          <OfferDetail />
         }
       />
       <Route
