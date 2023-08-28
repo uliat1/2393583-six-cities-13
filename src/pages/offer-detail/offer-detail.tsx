@@ -15,7 +15,7 @@ import { getAuthorizationStatus } from '../../store/user-process/selector';
 import { getOffers } from '../../store/offer-data-process/selector';
 import {fetchOfferAction, fetchFavoriteOffersAction} from '../../store/api-actions';
 import {api} from '../../store';
-
+//fictive
 function OfferDetail(): JSX.Element {
 
   const navigate = useNavigate();
