@@ -22,14 +22,16 @@ function FavoritesScreen(): JSX.Element {
     [city: string]: Offers;
   } = {};
 
-  favoriteOffers && favoriteOffers.forEach((offer) => {
-    const city = offer.city.name;
-    if(!cities[city]) {
-      cities[city] = [offer];
-    } else {
-      cities[city].push(offer);
-    }
-  });
+  if (favoriteOffers) {
+    favoriteOffers.forEach((offer) => {
+      const city = offer.city.name;
+      if(!cities[city]) {
+        cities[city] = [offer];
+      } else {
+        cities[city].push(offer);
+      }
+    });
+  }
 
   const citiesOffers: [string, Offers][] = Object.entries(cities);
 

@@ -13,7 +13,7 @@ import { getAuthorizationStatus } from '../../store/user-process/selector';
 import { getServerErrorStatus, getOffers, getLoadedDataStatus } from '../../store/offer-data-process/selector';
 import OfferDetail from '../../pages/offer-detail/offer-detail';
 import FavoritesScreen from '../../pages/favorites-page/favorites-page';
-import PrivateLoginRoute from '../private-login-route/private-login-route';
+import PrivateLoginRoute from '../private-login-route/private-logine-route';
 
 function App(): JSX.Element {
 
