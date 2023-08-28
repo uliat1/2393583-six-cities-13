@@ -4,6 +4,11 @@ import {toast} from 'react-toastify';
 import { getToken } from './token';
 import { BACKEND_URL, REQUEST_TIMEOUT } from '../const';
 
+type DetailMessageType = {
+  type: string;
+  message: string;
+}
+
 const StatusCodeMapping: Record<number, boolean> = {
   [StatusCodes.BAD_REQUEST]: true,
   [StatusCodes.UNAUTHORIZED]: true,
@@ -22,6 +27,8 @@ export const createAPI = (): AxiosInstance => {
     (config: AxiosRequestConfig) => {
       const token = getToken();
 
+      config.headers = config.headers || {};
+
       if (token) {
         config.headers['x-token'] = token;
       }
@@ -32,9 +39,10 @@ export const createAPI = (): AxiosInstance => {
 
   api.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
+    (error: AxiosError<DetailMessageType>) => {
       if (error.response && shouldDisplayError(error.response)) {
-        toast.warn(error.response.data.error);
+        const detailMessage = (error.response.data);
+        toast.warn(detailMessage.message);
       }
 
       throw error;
