@@ -5,24 +5,22 @@ import ReviewsList from '../../components/review-list/review-list';
 import ReviewForm from '../../components/review-form/review-form';
 import Map from '../../components/map/map';
 import OfferCardList from '../../components/offer-card-list/offer-card-list';
-import NotFound from '../not-found-page/not-found-page';
+//import NotFound from '../not-found-page/not-found-page';
 import {Offers, Offer} from '../../types/offer';
 import { Reviews } from '../../types/review';
 import {useAppSelector, useAppDispatch} from '../../hooks';
 import {MAX_REVIEWS_NUMBER, APIRoute, PlaceClasses, AuthorizationStatus} from '../../const';
 import {calcRatingWidth, sortDayDown} from '../../utils';
 import { getAuthorizationStatus } from '../../store/user-process/selector';
-import { getOffers } from '../../store/offer-data-process/selector';
+//import { getOffers } from '../../store/offer-data-process/selector';
 import {fetchOfferAction, fetchFavoriteOffersAction} from '../../store/api-actions';
 import {api} from '../../store';
-//fictive
+
 function OfferDetail(): JSX.Element {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const offers = useAppSelector(getOffers);
-
-  const urlId = Number(useParams().id);
+  const { id: urlId } = useParams();
 
   const [offer, setOffer] = useState<Offer>();
   const [offersNearby, setOffersNearby] = useState<Offers>([]);
@@ -32,6 +30,11 @@ function OfferDetail(): JSX.Element {
     let isMounted = true;
     if (isMounted) {
       const fetchData = async () => {
+        try {
+          const offerResult = await api.get<Offer>(`${APIRoute.Offers}/${urlId}`);
+        } catch (e) {
+          return <Navigate to='*' />;
+        }
         const offerResult = await api.get<Offer>(`${APIRoute.Offers}/${urlId}`);
         setOffer(offerResult.data);
         window.scrollTo(0,0);
@@ -61,7 +64,7 @@ function OfferDetail(): JSX.Element {
 
   }, [urlId]);
 
-  const isOfferId = () => offers?.some((currentOffer) => currentOffer.id === urlId);
+  //const isOfferId = () => offers?.some((currentOffer) => currentOffer.id === urlId);
 
   const updateReviews = (data: Reviews) => {
     setReviews(data);
@@ -73,7 +76,7 @@ function OfferDetail(): JSX.Element {
 
   const checkAuthorizationStatus = () => {
     if (authorizationStatus !== AuthorizationStatus.Auth) {
-      navigate('../login');
+      navigate('/login');
     }
   };
 
@@ -85,11 +88,10 @@ function OfferDetail(): JSX.Element {
     await dispatch(fetchFavoriteOffersAction());
   };
 
-  if (!isOfferId()) {
-    return (
-      <NotFound />
-    );
+  if (!urlId) {
+    return <Navigate to="*" />;
   }
+
 
   return (
     <div className='page'>

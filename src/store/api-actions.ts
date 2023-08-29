@@ -6,7 +6,7 @@ import {redirectToRoute} from './action';
 import {saveToken, dropToken} from '../services/token';
 import {APIRoute, AppRoute} from '../const';
 import {AuthData} from '../types/auth-data';
-import { UserData } from '../types/user-data.js';
+import {UserData} from '../types/user-data';
 
 export const fetchOfferAction = createAsyncThunk<Offers, undefined, {
   dispatch: AppDispatch;
