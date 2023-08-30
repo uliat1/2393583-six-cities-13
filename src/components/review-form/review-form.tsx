@@ -1,39 +1,54 @@
-import {useState} from 'react';
-import {api} from '../../store';
-import {MIN_COMMENT_LENGTH, MAX_COMMENT_LENGTH, APIRoute} from '../../const';
-import { Reviews } from '../../types/review';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { FormEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
+import { isReviewFormValid } from '../../utils';
+import { MIN_COMMENT_LENGTH } from '../../const';
+import ErrorReview from '../../pages/error-page/error-review/error-revew';
+import { fetchSendCommentAction } from '../../store/api-actions';
+import { getCommentDataSendingStatus, getCommentSendingErrorStatus } from '../../store/reducers/offer-data-process/selector';
 
 type ReviewFormProps = {
-  id: number;
-  updateReviews: (data: Reviews) => void;
+  id: string;
 }
 
-function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
-  const [comment, setComment] = useState('');
-  const [rating, setRating] = useState(0);
+function ReviewForm({id}: ReviewFormProps): JSX.Element {
+  const dispatch = useAppDispatch();
+  const errorOccurred = useAppSelector(getCommentSendingErrorStatus);
+  const isCommentSending = useAppSelector(getCommentDataSendingStatus);
 
-  type FieldEvent = React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>;
+  const [formState, setFormState] = useState({
+    ratingData: 0,
+    comment: '',
+  });
 
-  const handleRatingFieldChange = (evt: FieldEvent) => {
-    setRating(Number(evt.target.value));
+  const handleRatingFieldChange = (evt: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    const {name, value} = evt.target;
+    let parsedValue: string | number = value;
+
+    if (name === 'ratingData') {
+      parsedValue = Number(value);
+    }
+
+    setFormState({...formState, [name]: parsedValue});
   };
 
-  const handleTextAreaChange = (evt: FieldEvent) => {
-    setComment(evt.target.value);
-  };
+  const isDisabled = isCommentSending || !isReviewFormValid(formState.ratingData, formState.comment);
 
-  const resetForm = () => {
-    setRating(0);
-    setComment('');
-  };
 
-  const sendReview = async () => {
-    const { data }: { data: Reviews } = await api.post(
-      `${APIRoute.Comments}/${id}`,
-      { comment, rating }
-    );
-    resetForm();
-    updateReviews(data);
+  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    const rating = Number(formState.ratingData);
+    const comment = formState.comment;
+
+    if (rating !== null && comment !== null) {
+      dispatch(fetchSendCommentAction({rating, comment, id, cb: () => {
+        setFormState({
+          ratingData: 0,
+          comment: '',
+        });
+      }}));
+    }
   };
 
   return (
@@ -41,10 +56,7 @@ function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
       className='reviews__form form'
       action='#'
       method='post'
-      onSubmit={(evt) => {
-        evt.preventDefault();
-        sendReview();
-      }}
+      onSubmit={handleSubmit}
     >
       <label className='reviews__label form__label' htmlFor='review'>Your review</label>
       <div className='reviews__rating-form form__rating'>
@@ -54,7 +66,7 @@ function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
           value='5'
           id='5-stars'
           type='radio'
-          checked={rating === 5}
+          checked={formState.ratingData === 5}
           onChange={handleRatingFieldChange}
         />
         <label htmlFor='5-stars' className='reviews__rating-label form__rating-label' title='perfect'>
@@ -69,7 +81,7 @@ function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
           value='4'
           id='4-stars'
           type='radio'
-          checked={rating === 4}
+          checked={formState.ratingData === 4}
           onChange={handleRatingFieldChange}
         />
         <label htmlFor='4-stars' className='reviews__rating-label form__rating-label' title='good'>
@@ -84,7 +96,7 @@ function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
           value='3'
           id='3-stars'
           type='radio'
-          checked={rating === 3}
+          checked={formState.ratingData === 3}
           onChange={handleRatingFieldChange}
         />
         <label htmlFor='3-stars' className='reviews__rating-label form__rating-label' title='not bad'>
@@ -99,7 +111,7 @@ function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
           value='2'
           id='2-stars'
           type='radio'
-          checked={rating === 2}
+          checked={formState.ratingData === 2}
           onChange={handleRatingFieldChange}
         />
         <label htmlFor='2-stars' className='reviews__rating-label form__rating-label' title='badly'>
@@ -114,7 +126,7 @@ function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
           value='1'
           id='1-star'
           type='radio'
-          checked={rating === 1}
+          checked={formState.ratingData === 1}
           onChange={handleRatingFieldChange}
         />
         <label htmlFor='1-star' className='reviews__rating-label form__rating-label' title='terribly'>
@@ -128,21 +140,19 @@ function ReviewForm({id, updateReviews}: ReviewFormProps): JSX.Element {
         id='review'
         name='review'
         placeholder='Tell how was your stay, what you like and what can be improved'
-        onChange={handleTextAreaChange}
-        value={comment}
+        onChange={handleRatingFieldChange}
+        value={formState.comment}
+        minLength={MIN_COMMENT_LENGTH}
       />
+      {errorOccurred && <ErrorReview />}
       <div className='reviews__button-wrapper'>
         <p className='reviews__help'>
-          To submit review please make sure to set <span className='reviews__star'>rating</span> and describe your stay with at least <b className='reviews__text-amount'>50 characters</b> and no more then <b className='reviews__text-amount'>300 characters</b>. Now you have entered {comment.length} character.
+        To submit review please make sure to set <span className="reviews__star">rating</span> and describe your stay with at least <b className="reviews__text-amount">50 characters</b>.
         </p>
         <button
           className='reviews__submit form__submit button'
           type='submit'
-          disabled={
-            comment.length < MIN_COMMENT_LENGTH ||
-            comment.length > MAX_COMMENT_LENGTH ||
-            rating === 0
-          }
+          disabled={isDisabled}
         >
           Submit
         </button>

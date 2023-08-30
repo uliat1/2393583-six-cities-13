@@ -1,58 +1,34 @@
-import {useState} from 'react';
-import {useAppDispatch, useAppSelector} from '../../hooks';
-import {SortingType} from '../../const';
-import {changeOption} from '../../store/offer-process/offer-process';
-import { getSelectedOption } from '../../store/offer-process/selector';
+import { SortingType } from '../../const';
+import classNames from 'classnames';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { changeSortingType } from '../../store/reducers/offer-process/offer-process';
+import { useState } from 'react';
+import { getSortingType } from '../../store/reducers/offer-process/selector';
 
 function SortingOptions(): JSX.Element {
-
-  const [isOptionsShow, setIsOptionsShow] = useState(false);
-
-  const selectedOption = useAppSelector(getSelectedOption);
-
+  const activeSortingType = useAppSelector(getSortingType);
   const dispatch = useAppDispatch();
+  const [isOpened, setIsOpened] = useState(false);
+
+  const handleSortingClick = (type: SortingType) => {
+    dispatch(changeSortingType(type));
+  };
 
   return (
-    <form className='places__sorting' action='#' method='get'>
-      <span className='places__sorting-caption'>Sort by </span>
-      <span
-        className='places__sorting-type'
-        tabIndex={0}
-        onClick = {() => setIsOptionsShow((prevItem) => !prevItem)}
-      >
-        {selectedOption}
-        <svg
-          className='places__sorting-arrow'
-          width='7'
-          height='4'
-          style = {{'transform': isOptionsShow ? 'rotate(180deg) translateY(50%)' : 'translateY(-50%) rotate(0deg)'}}
-        >
-          <use xlinkHref ='#icon-arrow-select'></use>
+    <form className="places__sorting" action="#" method="get" >
+      <span className="places__sorting-caption">Sort by</span>
+      <span className="places__sorting-type" tabIndex={0} onClick={() => setIsOpened((option) => !option)}>
+        {activeSortingType}
+        <svg className="places__sorting-arrow" width="7" height="4" >
+          <use xlinkHref="#icon-arrow-select"></use>
         </svg>
       </span>
-      {
-        isOptionsShow ?
-          <ul className='places__options places__options--custom places__options--opened'>
-            {
-              Object.values(SortingType).map((option) => (
-                <li
-                  className={selectedOption === option ?
-                    'places__option places__option--active' :
-                    'places__option'}
-                  key={option}
-                  tabIndex={0}
-                  onClick={() => {
-                    dispatch(changeOption(option));
-                    setIsOptionsShow((prevItem) => !prevItem);
-                  }}
-                >
-                  {option}
-                </li>
-              ))
-            }
-          </ul> : null
-      }
-
+      <ul className={classNames('places__options', 'places__options--custom', {'places__options--opened':isOpened})} onClick={() => setIsOpened((option) => !option)}>
+        {Object.values(SortingType).map((type) => (
+          <li key={type} onClick={() => handleSortingClick(type)} className={classNames('places__option', {'places__option--active': type === activeSortingType})} tabIndex={0}>
+            {type}
+          </li>))}
+      </ul>
     </form>
   );
 }

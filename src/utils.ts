@@ -1,65 +1,47 @@
 import dayjs from 'dayjs';
-import {Offers, Offer} from './types/offer';
-import {AuthorizationStatus} from './const';
-import { Review } from './types/review';
 import { SortingType } from './const';
+import { Offer } from './types/offer';
+import { Reviews } from './types/review';
+import { ALL_CITIES, RATING_KOEF} from './const';
 
-const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
-  authorizationStatus === AuthorizationStatus.Unknown;
+export function isReviewFormValid(ratingData: number, comment: FormDataEntryValue) {
+  return Number(ratingData) > 0 && comment.length < 301 && comment.length > 49;
+}
 
-const calcRatingWidth = (rating: number) => `${Math.round(rating) * 20}%`;
+export const sorting = {
+  [SortingType.Popular]: (offers: Offer[]) => offers,
+  [SortingType.PriceLow]: (offers: Offer[]) => [...offers].sort((a, b) => a.price - b.price),
+  [SortingType.PriceHigh]: (offers: Offer[]) => [...offers].sort((a, b) => b.price - a.price),
+  [SortingType.TopRated]: (offers: Offer[]) => [...offers].sort((a, b) => b.rating - a.rating),
+};
 
-const humanizeDate = (dueDate: string) => dayjs(dueDate).format('MMMM YYYY');
+export function calcRatingWidth(rating: number): string {
+  return `${RATING_KOEF * Math.round(rating)}%`;
+}
 
-const getOffersByCity = (offers: Offers | undefined, cityName: string) => offers && offers.filter((offer) => offer.city.name === cityName);
+export function sortByDate(ratingA: Reviews, ratingB: Reviews) {
+  return dayjs(ratingB.date).diff(ratingA.date);
+}
 
-const getCityData = (offers: Offers | undefined, cityName: string) => {
-  if (offers) {
-    const offersByCity = offers.filter((offer) => offer.city.name === cityName);
-    return offersByCity.length && offersByCity[0].city;
+export function isPasswordValid(password: string | undefined) {
+  if (
+    !password ||
+    password.length < 2 ||
+    !/\d/.test(password) ||
+    !/\D/i.test(password) ||
+    false
+  ) {
+    return false;
   }
-};
 
-const getWeightForPriceUp = (priceA: number, priceB: number) => priceA - priceB;
-const getWeightForPriceDown = (priceA: number, priceB: number) => priceB - priceA;
-const getWeightForTopRatedFirst = (ratedA: number, ratedB: number) => ratedB - ratedA;
+  return true;
+}
 
-const sortPriceUp = (offerA: Offer, offerB: Offer) => getWeightForPriceUp(offerA.price, offerB.price);
-const sortPriceDown = (offerA: Offer, offerB: Offer) => getWeightForPriceDown(offerA.price, offerB.price);
-const sortTopRatedFirst = (offerA: Offer, offerB: Offer) => getWeightForTopRatedFirst(offerA.rating, offerB.rating);
+export function getRandomCity(cities: typeof ALL_CITIES) {
+  return cities[Math.floor(Math.random() * cities.length)];
+}
 
-const sortDayDown = (reviewA: Review, reviewB: Review) => dayjs(reviewB.date).diff(dayjs(reviewA.date));
+export function getType(type: string): string {
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
 
-const getSortedOffers = (offers: Offers | undefined, selectedOption: string) => {
-  switch (selectedOption) {
-    case SortingType.Popular:
-      return offers;
-    case SortingType.PriceLow:
-      return offers && offers.slice().sort(sortPriceUp);
-    case SortingType.PriceHigh:
-      return offers && offers.slice().sort(sortPriceDown);
-    case SortingType.TopRated:
-      return offers && offers.slice().sort(sortTopRatedFirst);
-    default:
-      return offers;
-  }
-};
-
-const getRandomCity = (cities: string[]) => {
-  const rand = Math.floor(Math.random() * cities.length);
-  return cities[rand];
-};
-
-export {
-  isCheckedAuth,
-  calcRatingWidth,
-  humanizeDate,
-  getOffersByCity,
-  getCityData,
-  sortPriceUp,
-  sortPriceDown,
-  sortDayDown,
-  sortTopRatedFirst,
-  getSortedOffers,
-  getRandomCity
-};

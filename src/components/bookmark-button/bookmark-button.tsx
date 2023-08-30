@@ -1,62 +1,26 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import { APIRoute, AuthorizationStatus } from '../../const';
-import {api} from '../../store';
-import {useAppDispatch, useAppSelector} from '../../hooks';
-import { getAuthorizationStatus } from '../../store/user-process/selector';
-import { fetchOfferAction, fetchFavoriteOffersAction } from '../../store/api-actions';
+import classNames from 'classnames';
 
 type BookmarkButtonProps = {
- isFavorite: boolean | undefined;
- id: number | undefined;
+  isBookmarkOffer: boolean;
+  onBookmarkClick: () => void;
+  isOfferFullCard: boolean;
 }
 
-function BookmarkButton({isFavorite, id}: BookmarkButtonProps): JSX.Element {
-
-  const initialStatus = isFavorite ? 1 : 0;
-
-  const [status, setStatus] = useState<0 | 1>(initialStatus);
-
-  const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  const checkAuthorizationStatus = () => {
-    if (authorizationStatus !== AuthorizationStatus.Auth) {
-      navigate('../login');
-    }
-  };
-
-  const onClickHandler = async (currentStatus: 0 | 1) => {
-    await api.post(
-      `${APIRoute.Favorite}/${id ?? 0}/${currentStatus ?? 0}`
-    );
-    await Promise.resolve(setStatus((prevStatus) => prevStatus === 0 ? 1 : 0));
-    await dispatch(fetchOfferAction());
-    await dispatch(fetchFavoriteOffersAction());
-  };
-
+function BookmarkButton({isBookmarkOffer, onBookmarkClick, isOfferFullCard}: BookmarkButtonProps):JSX.Element {
   return (
     <button
       className={
-        isFavorite ?
-          'place-card__bookmark-button place-card__bookmark-button--active button' :
-          'place-card__bookmark-button button'
+        classNames(`${isOfferFullCard ? 'offer' : 'place-card'}__bookmark-button button`,
+          {'place-card__bookmark-button--active': isBookmarkOffer && !isOfferFullCard},
+          {'offer__bookmark-button--active': isBookmarkOffer && isOfferFullCard})
       }
-      type='button'
-      onClick={() => {
-        checkAuthorizationStatus();
-        onClickHandler(status === 0 ? 1 : 0);
-      }}
+      type="button"
+      onClick={onBookmarkClick}
     >
-      <svg
-        className='place-card__bookmark-icon'
-        width='18'
-        height='19'
-      >
-        <use xlinkHref ='#icon-bookmark'></use>
+      <svg className={`${isOfferFullCard ? 'offer' : 'place-card'}__bookmark-icon`} width={isOfferFullCard ? 31 : 18} height={isOfferFullCard ? 33 : 19}>
+        <use xlinkHref="#icon-bookmark"></use>
       </svg>
-      <span className='visually-hidden'>To bookmarks</span>
+      <span className="visually-hidden">To bookmarks</span>
     </button>
   );
 }

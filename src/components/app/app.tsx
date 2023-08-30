@@ -1,72 +1,81 @@
-import {Route, Routes} from 'react-router-dom';
-import {AppRoute} from '../../const';
+import { Route, Routes } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import { AppRoute } from '../../const';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getAuthCheckedStatus, getAuthorizationStatus } from '../../store/reducers/user-process/selector';
+import { getOffersDataLoadingStatus, getOffers, getErrorStatus } from '../../store/reducers/offer-process/selector';
+import Layout from '../layout/layout';
 import WelcomeScreen from '../../pages/welcome-page/welcome-page';
-import WelcomeScreenEmpty from '../../pages/welcome-page-empty/welcome-page-empty';
-import NotFound from '../../pages/not-found-page/not-found-page';
 import LoginScreen from '../../pages/login-page/login-page';
+import FavoritesScreen from '../../pages/favorites-page/favorites-page';
+import NotFound from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-router/private-router';
-import {useAppSelector} from '../../hooks';
 import LoadingSpinner from '../../pages/loading-spinner/loading-spinner';
 import ErrorScreen from '../../pages/error-page/error-page';
-import {isCheckedAuth} from '../../utils';
-import { getAuthorizationStatus } from '../../store/user-process/selector';
-import { getServerErrorStatus, getOffers, getLoadedDataStatus } from '../../store/offer-data-process/selector';
-import OfferDetail from '../../pages/offer-detail/offer-detail';
-import FavoritesScreen from '../../pages/favorites-page/favorites-page';
-import PrivateLoginRoute from '../private-login-route/private-logine-route';
+import { useEffect } from 'react';
+import { checkAuthAction, fetchOffersAction } from '../../store/api-actions';
+import OfferScreen from '../../pages/offer-page/offer-page';
 
 function App(): JSX.Element {
-
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const isDataLoaded = useAppSelector(getLoadedDataStatus);
-  const isServerError = useAppSelector(getServerErrorStatus);
+  const isAuthChecked = useAppSelector(getAuthCheckedStatus);
+  const isOffersDataLoading = useAppSelector(getOffersDataLoadingStatus);
+  const errorOccurred = useAppSelector(getErrorStatus);
   const offers = useAppSelector(getOffers);
+  const dispatch = useAppDispatch();
 
-  if (isServerError) {
-    return (
-      <ErrorScreen />
-    );
-  }
+  useEffect(() => {
+    dispatch(fetchOffersAction());
+    dispatch(checkAuthAction());
+  }, [dispatch]);
 
-  if (isCheckedAuth(authorizationStatus) || isDataLoaded) {
+  if (!isAuthChecked || isOffersDataLoading) {
     return (
       <LoadingSpinner />
     );
   }
 
+  if (errorOccurred) {
+    return (<ErrorScreen />);
+  }
+
   return (
-    <Routes>
-      <Route
-        path={AppRoute.Main}
-        element={offers && offers.length ? <WelcomeScreen /> : <WelcomeScreenEmpty />}
-      />
-      <Route
-        path={AppRoute.Login}
-        element={
-          <PrivateLoginRoute authorizationStatus={authorizationStatus}>
-            <LoginScreen />
-          </PrivateLoginRoute>
-        }
-      />
-      <Route
-        path={AppRoute.Favorites}
-        element={
-          <PrivateRoute authorizationStatus={authorizationStatus}>
-            <FavoritesScreen />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path={AppRoute.OfferDetail}
-        element={
-          <OfferDetail />
-        }
-      />
-      <Route
-        path='*'
-        element={<NotFound />}
-      />
-    </Routes>
+    <HelmetProvider>
+      <Routes>
+        <Route
+          path={AppRoute.Main}
+          element={<Layout authorizationStatus={authorizationStatus} />}
+        >
+          <Route
+            index element={
+              <WelcomeScreen
+                offers={offers}
+              />
+            }
+          />
+          <Route
+            element={<PrivateRoute authorizationStatus={authorizationStatus} />}
+          >
+            <Route
+              element={<FavoritesScreen />}
+              path={AppRoute.Favorites}
+            />
+          </Route>
+          <Route
+            path={`${AppRoute.Offer}:id`}
+            element={<OfferScreen />}
+          />
+          <Route
+            path="*"
+            element={<NotFound />}
+          />
+        </Route>
+        <Route
+          path={AppRoute.Login}
+          element={<LoginScreen />}
+        />
+      </Routes>
+    </HelmetProvider>
   );
 }
 

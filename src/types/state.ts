@@ -1,23 +1,41 @@
 import {store} from '../store/index';
-import {Offers} from './offer';
-import { AuthorizationStatus } from '../const';
+import {Offer, OfferCard} from './offer';
+import { AuthorizationStatus, SortingType } from '../const';
+import { Reviews } from './review';
 
 export type UserProcess = {
   authorizationStatus: AuthorizationStatus;
+  email: string;
 };
 
-export type OfferData = {
-  offers: Offers | undefined;
-  favoriteOffers: Offers | undefined;
-  isDataLoaded: boolean;
-  isServerError: boolean;
-};
+export type OfferIdProcess = {
+  offer: OfferCard | null;
+  isOfferDataLoading: boolean;
+  isCommentsLoading: boolean;
+  isCommentSending: boolean;
+  nearbyOffers: Offer[];
+  comments: Reviews[];
+  comment: Reviews | null;
+  hasOfferError: boolean;
+  hasNearbyError: boolean;
+  hasCommentsLoadingError: boolean;
+  hasCommentSendingError: boolean;
+}
 
-export type OfferProcess = {
-  selectedCity: string;
-  selectedOption: string;
-  error: string | null;
-};
+export type OffersProcess = {
+  city: string;
+  offers: Offer[];
+  sortingType: SortingType;
+  isOffersDataLoading: boolean;
+  errorOccurred: boolean;
+}
+
+export type FavoriteProcess = {
+  favorites: Offer[];
+  isFavoritesDataLoading: boolean;
+  errorOccurred: boolean;
+}
+
 
 export type State = ReturnType<typeof store.getState>;
 

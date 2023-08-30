@@ -1,73 +1,87 @@
-import {useRef, useEffect} from 'react';
-import leaflet from 'leaflet';
-import useMap from '../../hooks/use-map';
-import {useAppSelector} from '../../hooks';
-import { URL_MARKER_DEFAULT, URL_MARKER_CURRENT } from '../../const';
-import {getCityData} from '../../utils';
-import { getSelectedCity } from '../../store/offer-process/selector';
+import { Icon, Marker, layerGroup } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Offers, Offer } from '../../types/offer';
+import { useEffect } from 'react';
+import useMap from '../../hooks/use-map';
+import { Offer, OfferCard } from '../../types/offer';
+import { URL_MARKER_DEFAULT, URL_MARKER_CURRENT } from '../../const';
 
 type MapProps = {
-  offers: Offers | undefined;
-  selectedOffer?: Offer | undefined;
-};
+  offers: Offer[];
+  selectedOffer?: Offer | OfferCard |undefined;
+  isDetailPage?: boolean;
+}
 
-const defaultCustomIcon = leaflet.icon({
-  iconUrl: URL_MARKER_DEFAULT,
+const defaultCustomIcon = new Icon({
+  iconUrl: URL_MARKER_DEFAULT as string,
   iconSize: [26, 39],
-  iconAnchor: [13, 39],
+  iconAnchor: [26, 39],
 });
 
-const currentCustomIcon = leaflet.icon({
+const currentCustomIcon = new Icon({
   iconUrl: URL_MARKER_CURRENT,
   iconSize: [26, 39],
-  iconAnchor: [13, 39],
+  iconAnchor: [26, 39]
 });
 
-function Map(props: MapProps): JSX.Element {
+function Map({offers, selectedOffer, isDetailPage}: MapProps): JSX.Element {
+  let cityLocation = offers[0]?.city.location;
 
-  const {selectedOffer, offers} = props;
+  if (!offers.length && selectedOffer) {
+    cityLocation = selectedOffer.city.location;
+  }
 
-  const selectedCity = useAppSelector(getSelectedCity);
-
-  const city = getCityData(offers, selectedCity);
-
-  const mapRef = useRef<HTMLDivElement>(null);
-  const map = useMap(mapRef, city);
+  const {map, mapRef} = useMap({cityLocation});
 
   useEffect(() => {
-
-    if (mapRef.current) {
-      const markerIcons = mapRef.current.querySelectorAll('.leaflet-marker-icon');
-      markerIcons.forEach((icon) => {
-        icon.remove();
-      });
+    if (map) {
+      if (cityLocation) {
+        map.setView(
+          {
+            lat: cityLocation.latitude,
+            lng: cityLocation.longitude,
+          },
+          cityLocation.zoom,
+        );
+      }
     }
+  }, [map, cityLocation]);
 
-    if (map && offers) {
+  useEffect(() => {
+    if (map) {
+      const markerLayer = layerGroup().addTo(map);
+
+      if (isDetailPage && selectedOffer) {
+        const markerSelected = new Marker({
+          lat: selectedOffer.location.latitude,
+          lng: selectedOffer.location.longitude,
+        });
+        markerSelected
+          .setIcon(currentCustomIcon)
+          .addTo(markerLayer);
+      }
+
       offers.forEach((offer) => {
-        leaflet
-          .marker({
-            lat: offer.location.latitude,
-            lng: offer.location.longitude,
-          }, {
-            icon: (selectedOffer !== undefined && offer.id === selectedOffer.id)
-              ? currentCustomIcon
-              : defaultCustomIcon,
-          })
-          .addTo(map);
+        const marker = new Marker({
+          lat: offer.location.latitude,
+          lng: offer.location.longitude,
+        });
+
+
+        marker
+          .setIcon(selectedOffer !== undefined && offer.id === selectedOffer.id
+            ? currentCustomIcon
+            : defaultCustomIcon)
+          .addTo(markerLayer);
       });
+
+      return () => {
+        map.removeLayer(markerLayer);
+      };
     }
-  }, [map, offers, selectedOffer]);
+  }, [map, offers, selectedOffer, isDetailPage]);
 
   return (
-    <div
-      style={{height: '100%', zIndex: '100'}}
-      ref={mapRef}
-      data-testid="map"
-    >
-    </div>
+    <div ref={mapRef} ></div>
   );
 }
 

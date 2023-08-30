@@ -1,14 +1,19 @@
-export type Review = {
-  comment: string;
-  date: string;
-  id: number;
-  rating: number;
-  user: {
-    avatarUrl: string;
-    id: number;
-    isPro: boolean;
-    name: string;
-  };
+export type User = {
+  name: string;
+  avatarUrl: string;
+  isPro: boolean;
 };
 
-export type Reviews = Review[];
+export type Reviews = {
+  id: string;
+  date: string;
+  user: User;
+  comment: string;
+  rating: number;
+};
+
+export type Review = {
+comment: string;
+ratingData: number;
+};
+

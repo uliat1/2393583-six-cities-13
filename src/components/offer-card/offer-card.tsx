@@ -1,15 +1,19 @@
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import BookmarkButton from '../bookmark-button/bookmark-button';
 import {Offer} from '../../types/offer';
 import {calcRatingWidth} from '../../utils';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getAuthorizationStatus } from '../../store/reducers/user-process/selector';
+import { AppRoute, AuthorizationStatus } from '../../const';
+import { fetchChangeStatusFavoriteAction } from '../../store/api-actions';
 
 type OfferCardProps = {
   offer: Offer;
-  onPlaceCardMouseOver?: (id: number) => void;
-  placeCardClass: string;
+  onPlaceCardMouseOver?: (offer?: Offer) => void;
+  isNearbyCard?: boolean;
 }
 
-function OfferCard({offer, onPlaceCardMouseOver, placeCardClass}: OfferCardProps): JSX.Element {
+function OfferCard({offer, onPlaceCardMouseOver, isNearbyCard}: OfferCardProps): JSX.Element {
   const {
     price,
     previewImage,
@@ -21,10 +25,31 @@ function OfferCard({offer, onPlaceCardMouseOver, placeCardClass}: OfferCardProps
     id
   } = offer;
 
+  const dispatch = useAppDispatch();
+
+  const status = Number(!isFavorite);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const navigate = useNavigate();
+  const isOfferFullCard = false;
+
+  const handleFavoriteClick = () => {
+    if (authorizationStatus === AuthorizationStatus.NoAuth) {
+      return navigate(AppRoute.Login);
+    }
+    dispatch(fetchChangeStatusFavoriteAction({status, id}));
+  };
+
+  const handlerPlaceCardMouseOver = (card?: Offer) => {
+    if (onPlaceCardMouseOver) {
+      onPlaceCardMouseOver(card);
+    }
+  };
+
   return (
-    <article
-      className={placeCardClass}
-      onMouseOver={() => onPlaceCardMouseOver && onPlaceCardMouseOver(id)}
+    <article className={`${isNearbyCard ? 'near-places' : 'cities'}__card place-card`}
+      id={id}
+      onMouseEnter={() => handlerPlaceCardMouseOver(offer)}
+      onMouseLeave={() => handlerPlaceCardMouseOver()}
     >
       {isPremium ?
         <div className='place-card__mark'>
@@ -42,7 +67,7 @@ function OfferCard({offer, onPlaceCardMouseOver, placeCardClass}: OfferCardProps
             <b className='place-card__price-value'>&euro;{price}</b>
             <span className='place-card__price-text'>&#47;&nbsp;night</span>
           </div>
-          <BookmarkButton isFavorite={isFavorite} id={id}/>
+          <BookmarkButton isBookmarkOffer={isFavorite} onBookmarkClick={handleFavoriteClick} isOfferFullCard={isOfferFullCard} />
         </div>
         <div className='place-card__rating rating'>
           <div className='place-card__stars rating__stars'>

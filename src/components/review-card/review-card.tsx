@@ -1,22 +1,19 @@
-import { Review } from '../../types/review';
-import {calcRatingWidth, humanizeDate} from '../../utils';
+import { Reviews } from '../../types/review';
+import {calcRatingWidth} from '../../utils';
+import dayjs from 'dayjs';
+import { DateFormat } from '../../const';
 
 type ReviewCardProps = {
-  review: Review;
+  review: Reviews;
 }
 
 function ReviewCard({review}: ReviewCardProps): JSX.Element {
-
   const {
     user,
     rating,
     comment,
     date
   } = review;
-
-  const reviewDate = date !== null
-    ? humanizeDate(date)
-    : '';
 
   return (
     <li className='reviews__item'>
@@ -31,14 +28,14 @@ function ReviewCard({review}: ReviewCardProps): JSX.Element {
       <div className='reviews__info'>
         <div className='reviews__rating rating'>
           <div className='reviews__stars rating__stars'>
-            <span style={{'width': calcRatingWidth(rating)}}></span>
-            <span className='visually-hidden'>Rating</span>
+            <span style={{width: calcRatingWidth(rating)}}></span>
+            <span className='visually-hidden'>{rating}</span>
           </div>
         </div>
         <p className='reviews__text'>
           {comment}
         </p>
-        <time className='reviews__time' dateTime={date}>{reviewDate}</time>
+        <time className='reviews__time' dateTime={dayjs(date).format(DateFormat.DATE_FORMAT)}>{dayjs(date).format(DateFormat.REVIEW_DATE_FORMAT)}</time>
       </div>
     </li>
   );
